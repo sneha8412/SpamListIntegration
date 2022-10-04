@@ -1,13 +1,14 @@
 import pandas as pd
+import time
 
-def NormalizeDomain(domain1):
+def NormalizeDomain(domain):
     #print(f"NormalizeDomain:{domain1}")
     
     #convert ints and floats to string in case there are IP addresses as  
-    if(str(domain1) == ""):
+    if(str(domain) == ""):
         return ""
 
-    domain1_parts = str(domain1).split(".")
+    domain1_parts = str(domain).split(".")
     domain1_parts.sort()
 
     if ("www" in domain1_parts):
@@ -20,6 +21,10 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
+
+#Main Program
+
+start_time = time.time()
 
 # Work with Bing Spam list, normalize the domains and print.
 spam_list_df = pd.read_csv('all_bing_spam_domains.csv', usecols=['SpamDomain', 'etldDomain'])
@@ -35,7 +40,7 @@ print(f"Size of Telemetry data frame: {telemetry_df.size}")
 # Merge the normalized Bing Spam List with Edge telemetry using inner join.
 merged_df = pd.merge(spam_list_df, telemetry_df, how='inner', on=['NormalizedDomain'])
 merged_df.drop_duplicates() # removes dupes
-print(f"Printing Merged DataFrame: Spammy Notification Domains")
+#print(f"Printing Merged DataFrame: Spammy Notification Domains")
 #PrintDataframe(merged_df)
 print(f"Spammy Notification Domains Size: {merged_df.size}")
 
@@ -43,6 +48,7 @@ print(f"Spammy Notification Domains Size: {merged_df.size}")
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('production_domains.txt', names=["SpamDomain"])
 deny_list_df.drop_duplicates()
+print(f"Size of existing DenyList data frame: {deny_list_df.size}")
 
 # Update deny list with spammy notification domains
 print("Concatenate: Deny list data frame + Spammy notificaton domains")
@@ -53,11 +59,14 @@ concat_deny_list_df.drop_duplicates() # remove dupes if any
 print(f"Final Deny List DataFrame size: {concat_deny_list_df.size}")
 
 # Write final deny list to file.
+print(f"Writing final deny list dataframe to file")
 concat_deny_list_df.to_csv("final_deny_list_domains.csv", index=False, header=None)
 
+# Size of additional entirs added to Deny list
+print(f"Size of additional items added to deny list: {concat_deny_list_df.size - deny_list_df.size}")
 
-
-
+# print time taken for the process.
+print(f"Total processing time (seconds): {time.time() - start_time}")
 
 
 
