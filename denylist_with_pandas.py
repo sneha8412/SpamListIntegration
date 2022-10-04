@@ -22,14 +22,14 @@ def PrintDataframe(df):
         print(row)
 
 
-#Main Program
+# Main Program
 
 start_time = time.time()
 
 # Work with Bing Spam list, normalize the domains and print.
 spam_list_df = pd.read_csv('all_bing_spam_domains.csv', usecols=['SpamDomain', 'etldDomain'])
 spam_list_df['NormalizedDomain'] = spam_list_df['SpamDomain'].map(NormalizeDomain)
-print(f"Size of Span list data frame: {spam_list_df.size}")
+print(f"Size of Spam list data frame: {spam_list_df.size}")
 #PrintDataframe(df)
 
 # Work with Edge telemetry, normalize and print.
@@ -62,7 +62,7 @@ print(f"Final Deny List DataFrame size: {concat_deny_list_df.size}")
 print(f"Writing final deny list dataframe to file")
 concat_deny_list_df.to_csv("final_deny_list_domains.csv", index=False, header=None)
 
-# Size of additional entirs added to Deny list
+# Size of additional entries added to Deny list
 print(f"Size of additional items added to deny list: {concat_deny_list_df.size - deny_list_df.size}")
 
 # print time taken for the process.
