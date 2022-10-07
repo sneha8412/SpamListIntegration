@@ -15,6 +15,9 @@ def NormalizeDomain(domain):
     domain_noprefix = str(domain)
     if domain_noprefix.startswith("https://"):
         domain_noprefix = domain_noprefix.split("https://")[1]
+    
+    if domain_noprefix.startswith("http://"):
+        domain_noprefix = domain_noprefix.split("http://")[1]
 
     domain_parts = domain_noprefix.split(".")
     domain_parts.sort()
@@ -24,14 +27,6 @@ def NormalizeDomain(domain):
     
     normalized_domain_string = '.'.join(domain_parts)
     return normalized_domain_string  
-
-def RemoveWebProtocol(domain):
-    #convert ints and floats to string in case there are IP addresses as  
-    if(str(domain) == ""):
-        return ""
-    
-    domain_parts = str(domain).split("https://")
-    domain_parts.sort()
 
 def PrintDataframe(df):
     for index, row in df.iterrows():
@@ -54,7 +49,7 @@ def edge_only(edge_df, intersect_df):
 
     edge_df = edge_df[['NormalizedDomain', 'Origin']]
     intersect_df = intersect_df[['NormalizedDomain', 'Origin']]
-    
+
     edge_df.to_csv("edge_df.csv", index=False)
     intersect_df.to_csv("edge_chrome_intersect_df.csv", index=False)
 
