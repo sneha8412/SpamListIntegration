@@ -4,7 +4,7 @@ import time
 # formats:
 # bing spam list: google.com (does not have www)
 # Deny list: www.google.com 
-# Telemetry: com.google.www (reversed)
+# Telemetry: com.google.www (reversed) (only reverse this one)
 
 
 def NormalizeDomain(domain):
@@ -61,7 +61,6 @@ print("Concatenate: Deny list data frame + Spammy notificaton domains")
 frames_to_concat = [ deny_list_df, merged_df[["SpamDomain"]] ] # put the frames to union in a array
 concat_deny_list_df = pd.concat(frames_to_concat)
 concat_deny_list_df.drop_duplicates() # remove dupes if any
-#PrintDataframe(concat_deny_list_df)
 print(f"Final Deny List DataFrame size: {len(concat_deny_list_df.axes[0])}")
 
 # Write final deny list to file.

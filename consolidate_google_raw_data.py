@@ -75,6 +75,3 @@ concat_all_chrome_data(chrome_data_to_append)
 # Read the newly formed concatenated csv and Create chrome latest csv from it.
 chrome_consolidated_df = pd.read_csv("consolidated_chrome_data.csv", usecols=['origin', 'month', 'accept', 'deny', 'ignore', 'dismiss'])
 grouping_data_for_final_df(chrome_consolidated_df)
-
-
-#  
