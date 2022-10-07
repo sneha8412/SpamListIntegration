@@ -25,6 +25,14 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
+# Find intersection of deny with the google telemtry data 
+def edge_deny_intersection(edge_df, deny_df):
+    merged_df = pd.merge(deny_df, edge_df, how='inner', on=['NormalizedDomain'])
+    merged_df.drop_duplicates() # removes dupes
+    print(f"intersection of chrome and deny list Domains Size: {len(merged_df.axes[0])}")
+    merged_df.to_csv("chrome_deny_intersect_only_domains.csv", index=False, columns =['NormalizedDomain', 'Origin'])
+    return merged_df
+
 # Main Program 
 
 # Work with Edge telemetry, normalize and print.
@@ -37,18 +45,9 @@ print(f"Size of Telemetry data frame: after normalization {len(telemetry_df.axes
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('production_domains.txt', names=["SpamDomain"])
 print(f"Size of existing DenyList data frame: {len(deny_list_df.axes[0])}")
-# Work with Deny list, normalize and print
 deny_list_df['NormalizedDomain'] = deny_list_df['SpamDomain'].map(NormalizeDomain)
 print(f"Size of existing DenyList data frame: after normalization {len(deny_list_df.axes[0])}")
 
-# Find union of deny with the edge telemtry data
-merged_df = pd.merge(deny_list_df, telemetry_df, how='inner', on=['NormalizedDomain'])
-merged_df.drop_duplicates() # removes dupes
-#print(f"Printing Merged DataFrame: Deny list Notification Domains that are present in Edge telemetry")
-print(f"Spammy Notification Domains Size: {len(merged_df.axes[0])}")
+edge_deny_intersection(telemetry_df, deny_list_df)
 
-# may be write in a new file for further calculation.
-total_number_of_edge_tele_rows = len(telemetry_df.axes[0])
-total_number_of_deny_list_rows = len(deny_list_df.axes[0])
-total_number_of_edge_deny_union_rows = len(merged_df.axes[0])
 
