@@ -31,7 +31,7 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
-# Find intersection of deny with the google telemtry data 
+# Find intersection of deny list with the chrome telemtry data. 
 def chrome_deny_intersection(chrome_df, deny_df):
     merged_df = pd.merge(deny_df, chrome_df, how='inner', on=['NormalizedDomain'])
     merged_df.drop_duplicates() # removes dupes
@@ -43,12 +43,12 @@ def chrome_deny_intersection(chrome_df, deny_df):
 
 # Work with google telemetry, normalize and print.
 print("Read google list dataframe")
-chrome_list_df = pd.read_csv('google-telemetry-202208.csv', usecols=["origin"])
+chrome_list_df = pd.read_csv('latest_chrome_data.csv', usecols=["origin"])
 print(f"Size of google Aug data frame: {len(chrome_list_df.axes[0])}")
 chrome_list_df['NormalizedDomain'] = chrome_list_df['origin'].map(NormalizeDomain)
 print(f"Size of google data frame: after normalization {len(chrome_list_df.axes[0])}")
 
-# Read the deny list.
+# Read the deny list, normailize the domain for comparison with Chrome data.
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('production_domains.txt', names=["SpamDomain"])
 print(f"Size of existing DenyList data frame: {len(deny_list_df.axes[0])}")

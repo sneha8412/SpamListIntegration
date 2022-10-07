@@ -32,7 +32,7 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
-# Find union of deny with the edge telemtry data 
+# Find intersection of chrome with the edge telemtry data.
 def merge_edge_and_chrome_intersection(edge_df, chrome_df):
     merged_df = pd.merge(chrome_list_df, telemetry_df, how='inner', on=['NormalizedDomain'])
     merged_df.drop_duplicates() # removes dupes
@@ -45,6 +45,7 @@ def merge_edge_and_chrome_intersection(edge_df, chrome_df):
 
     return merged_df
 
+# Get data in edge that does not intersect with chrome
 def edge_only(edge_df, intersect_df):
 
     edge_df = edge_df[['NormalizedDomain', 'Origin']]
@@ -74,8 +75,8 @@ print(f"Size of Telemetry data frame: after normalization {len(telemetry_df.axes
 
 # Read the google telemetry, normalize and print.
 print("Read google list dataframe")
-chrome_list_df = pd.read_csv('google-telemetry-202208.csv', usecols=["origin"])
-print(f"Size of google Aug data frame: {len(chrome_list_df.axes[0])}")
+chrome_list_df = pd.read_csv('latest_chrome_data.csv', usecols=["origin"])
+print(f"Size of google latest data frame: {len(chrome_list_df.axes[0])}")
 chrome_list_df['NormalizedDomain'] = chrome_list_df['origin'].map(NormalizeDomain)
 print(f"Size of google data frame: after normalization {len(chrome_list_df.axes[0])}")
 
