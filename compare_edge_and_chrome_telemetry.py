@@ -72,7 +72,7 @@ print(f"Size of Telemetry data frame: {len(telemetry_df.axes[0])}")
 telemetry_df['NormalizedDomain'] = telemetry_df['Origin'].map(NormalizeDomain)
 print(f"Size of Telemetry data frame: after normalization {len(telemetry_df.axes[0])}")
 
-# Read the google list, normalize and print.
+# Read the google telemetry, normalize and print.
 print("Read google list dataframe")
 chrome_list_df = pd.read_csv('google-telemetry-202208.csv', usecols=["origin"])
 print(f"Size of google Aug data frame: {len(chrome_list_df.axes[0])}")
