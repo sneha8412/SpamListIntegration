@@ -6,6 +6,7 @@ import time
 # Deny list: www.google.com 
 # Telemetry: com.google.www (reversed)
 
+
 def NormalizeDomain(domain):
     #print(f"NormalizeDomain:{domain}")
     
