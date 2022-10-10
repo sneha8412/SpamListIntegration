@@ -1,7 +1,7 @@
 import pandas as pd
 from urllib.parse import urlparse
-# This file aims to find the common domains that exist in the chrome old and new
-# telemetry. The old data was used to add the domains to the deny list previously.  
+# This file aims to compare the domains that exist in the old_chrome_deny_intersect_only
+# deny_intersect_for_chrome_edge_domains.csv
 
 # formats:
 # bing spam list: google.com (does not have www)

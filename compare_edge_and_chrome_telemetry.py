@@ -1,4 +1,4 @@
-from xml.dom import InvalidModificationErr
+from urllib.parse import urlparse
 import pandas as pd
 # This file aims to find the common domains that exist in the edge and chrome 
 # telemetry. The larger the intersect the more confidence we can develop in using 

@@ -1,4 +1,5 @@
 import pandas as pd
+from urllib.parse import urlparse
 # This file aims to find the common domains in the deny list and the edge Telemetry
 # in an attempt to find any domains in the deny list that are redundant or no longer 
 # send any notifications.

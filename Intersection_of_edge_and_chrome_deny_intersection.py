@@ -4,6 +4,7 @@
 # from the total number of intersects found in deny + Edge and  Deny + Chrome.
 
 import pandas as pd
+from urllib.parse import urlparse
 
 # formats:
 # bing spam list: google.com (does not have www)

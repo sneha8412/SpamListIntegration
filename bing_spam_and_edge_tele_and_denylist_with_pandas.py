@@ -48,6 +48,7 @@ merged_df = pd.merge(spam_list_df, telemetry_df, how='inner', on=['NormalizedDom
 merged_df.drop_duplicates() # removes dupes
 #print(f"Printing Merged DataFrame: Spammy Notification Domains")
 #PrintDataframe(merged_df)
+merged_df.to_csv("bing_spammy_domains_in_edge_telemetry.csv", index=False)
 print(f"Spammy Notification Domains Size: {len(merged_df.axes[0])}")
 
 # Read the deny list.

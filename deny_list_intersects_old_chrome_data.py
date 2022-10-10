@@ -1,4 +1,5 @@
 import pandas as pd
+from urllib.parse import urlparse
 # This file aims to find the common domains in the deny list and the chrome data
 # in an attempt to find any domains in the deny list that are redundant or no longer 
 # send any notifications.
@@ -39,7 +40,7 @@ def old_chrome_deny_intersection(old_chrome_df, deny_df):
     merged_df = pd.merge(old_chrome_df, deny_df, how='inner', on=['NormalizedDomain'])
     merged_df.drop_duplicates() # removes dupes
     print(f"intersection of chrome and deny list Domains Size: {len(merged_df.axes[0])}")
-    merged_df.to_csv("chrome_deny_intersect_only_domains.csv", index=False, columns =['NormalizedDomain', 'origin'])
+    merged_df.to_csv("old_chrome_deny_intersect_only_domains.csv", index=False, columns =['NormalizedDomain', 'origin'])
     return merged_df
 
 # Main Program 

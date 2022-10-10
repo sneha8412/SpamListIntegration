@@ -1,4 +1,5 @@
 import pandas as pd
+from urllib.parse import urlparse
 # This file aims to create a csv file that has the latest domains and data on older 
 # domains in the chrome data on notifications from Jan to Aug.
 

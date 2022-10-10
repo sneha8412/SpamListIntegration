@@ -1,4 +1,5 @@
 from pandas import  DataFrame
+from urllib.parse import urlparse
 
 # df1 = DataFrame({'col1':[1,2,3], 'col2':[2,3,4]})
 # df2 = DataFrame({'col1':[4,2,5], 'col2':[6,3,5]})
@@ -34,8 +35,26 @@ def NormalizeDomain(domain):
     # print(normalized_domain_string)
     # return normalized_domain_string  
 
-NormalizeDomain('com.gmail.google') #edge
-NormalizeDomain('https://google.gmail.com') #chrome
+# NormalizeDomain('com.gmail.google') #edge
+# NormalizeDomain('https://google.gmail.com') #chrome
 
-NormalizeDomain('gmail.com.google') #edge
-NormalizeDomain('https://google.gmail.com') #chrome
+# NormalizeDomain('gmail.com.google') #edge
+# NormalizeDomain('https://google.gmail.com') #chrome
+
+A = urlparse('https://google.gmail.com')
+print(A.netloc)
+
+B = urlparse('com.gmail.google')
+print(B.netloc)
+
+C = urlparse('gmail.com.google')
+print(C.netloc)
+
+D = urlparse('www.gmail.com')
+print(D.netloc)
+
+E = urlparse('gmail.com')
+print(E.netloc)
+
+E = urlparse('https://www.gmail.com')
+print(E.netloc)
