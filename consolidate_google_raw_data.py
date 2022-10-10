@@ -1,4 +1,6 @@
 import pandas as pd
+# This file aims to create a csv file that has the latest domains and data on older 
+# domains in the chrome data on notifications from Jan to Aug.
 
 # Add a new month column to all the data frames and populate the value based on the numerical
 # value of that month. This value is constant for all the origins in a given df.

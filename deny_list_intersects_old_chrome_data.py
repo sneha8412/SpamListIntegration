@@ -34,9 +34,9 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
-# Find intersection of deny list with the chrome telemtry data. 
-def chrome_deny_intersection(chrome_df, deny_df):
-    merged_df = pd.merge(deny_df, chrome_df, how='inner', on=['NormalizedDomain'])
+# Find intersection of deny list with the old chrome  data. 
+def old_chrome_deny_intersection(old_chrome_df, deny_df):
+    merged_df = pd.merge(old_chrome_df, deny_df, how='inner', on=['NormalizedDomain'])
     merged_df.drop_duplicates() # removes dupes
     print(f"intersection of chrome and deny list Domains Size: {len(merged_df.axes[0])}")
     merged_df.to_csv("chrome_deny_intersect_only_domains.csv", index=False, columns =['NormalizedDomain', 'origin'])
@@ -44,19 +44,21 @@ def chrome_deny_intersection(chrome_df, deny_df):
 
 # Main Program 
 
-# Work with google telemetry, normalize and print.
-print("Read google list dataframe")
-chrome_list_df = pd.read_csv('latest_chrome_data.csv', usecols=["origin"])
-print(f"Size of google latest data frame: {len(chrome_list_df.axes[0])}")
-chrome_list_df['NormalizedDomain'] = chrome_list_df['origin'].map(NormalizeDomain)
-print(f"Size of google data frame: after normalization {len(chrome_list_df.axes[0])}")
+# Work with old google telemetry, normalize and print.
+print("Read old google list dataframe")
+old_chrome_list_df = pd.read_csv('old_chrome_domain_with_score.csv', usecols=["origin"])
+old_chrome_list_df.drop_duplicates()
+print(f"Size of old chrome data frame: {len(old_chrome_list_df.axes[0])}")
+old_chrome_list_df['NormalizedDomain'] = old_chrome_list_df['origin'].map(NormalizeDomain)
+print(f"Size of old google data frame: after normalization {len(old_chrome_list_df.axes[0])}")
 
 # Read the deny list, normalize the domain for comparison with Chrome data.
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('production_domains.txt', names=["SpamDomain"])
+deny_list_df.drop_duplicates()
 print(f"Size of existing DenyList data frame: {len(deny_list_df.axes[0])}")
 deny_list_df['NormalizedDomain'] = deny_list_df['SpamDomain'].map(NormalizeDomain)
 print(f"Size of existing DenyList data frame: after normalization {len(deny_list_df.axes[0])}")
 
-chrome_deny_intersection(chrome_list_df, deny_list_df)
+old_chrome_deny_intersection(old_chrome_list_df, deny_list_df)
 

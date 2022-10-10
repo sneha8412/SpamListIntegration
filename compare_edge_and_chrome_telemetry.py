@@ -1,5 +1,8 @@
 from xml.dom import InvalidModificationErr
 import pandas as pd
+# This file aims to find the common domains that exist in the edge and chrome 
+# telemetry. The larger the intersect the more confidence we can develop in using 
+# edge Telemetry. 
 
 # formats:
 # bing spam list: google.com (does not have www)
