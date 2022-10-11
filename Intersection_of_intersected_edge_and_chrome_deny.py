@@ -34,7 +34,7 @@ def PrintDataframe(df):
 # Find intersection of deny edge and deny chrome domains.
 def deny_intersection(edge_deny_df, chrome_deny_df):
     merged_df = pd.merge(edge_deny_df, chrome_deny_df, how='inner', on=['NormalizedDomain'])
-    merged_df.drop_duplicates() # removes dupes
+    merged_df.drop_duplicates(inplace=True) # removes dupes
     print(f"intersection of deny_intersect_for_chrome_edge_domains df Size: {len(merged_df.axes[0])}")
     merged_df.to_csv("deny_intersect_for_chrome_edge_domains.csv", index=False, columns =['NormalizedDomain', 'origin'])
     return merged_df

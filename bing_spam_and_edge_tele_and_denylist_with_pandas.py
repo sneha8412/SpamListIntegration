@@ -6,7 +6,6 @@ import time
 # Deny list: www.google.com 
 # Telemetry: com.google.www (reversed) (only reverse this one)
 
-
 def NormalizeDomain(domain):
     #print(f"NormalizeDomain:{domain}")
     
@@ -45,36 +44,36 @@ print(f"Size of Telemetry data frame after normalization: {len(telemetry_df.axes
 
 # Merge the normalized Bing Spam List with Edge telemetry using inner join.
 merged_df = pd.merge(spam_list_df, telemetry_df, how='inner', on=['NormalizedDomain'])
-merged_df.drop_duplicates() # removes dupes
-#print(f"Printing Merged DataFrame: Spammy Notification Domains")
-#PrintDataframe(merged_df)
+merged_df.drop_duplicates(inplace=True) # removes dupes
+merged_df["SpamDomain"].to_csv("bing_spam_domains_from_edge_tobe_added_to_denylist.csv", index=False, header=None)
 merged_df.to_csv("bing_spammy_domains_in_edge_telemetry.csv", index=False)
 print(f"Spammy Notification Domains Size: {len(merged_df.axes[0])}")
 
 # Read the deny list.
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('production_domains.txt', names=["SpamDomain"])
-deny_list_df.drop_duplicates()
+deny_list_df.drop_duplicates(inplace=True)
 print(f"Size of existing DenyList data frame: {len(deny_list_df.axes[0])}")
 
 # Update deny list with spammy notification domains
 print("Concatenate: Deny list data frame + Spammy notificaton domains")
 frames_to_concat = [ deny_list_df, merged_df[["SpamDomain"]] ] # put the frames to union in a array
 concat_deny_list_df = pd.concat(frames_to_concat)
-concat_deny_list_df.drop_duplicates() # remove dupes if any
-print(f"Final Deny List DataFrame size: {len(concat_deny_list_df.axes[0])}")
+result_df = concat_deny_list_df.drop_duplicates() # remove dupes if any
+print(f"Final Deny List DataFrame size: {len(result_df.axes[0])}")
 
 # Write final deny list to file.
 print(f"Writing final deny list dataframe to file")
-concat_deny_list_df.to_csv("final_deny_list_domains.csv", index=False, header=None)
+result_df.to_csv("final_deny_list_domains.csv", index=False, header=None)
 
 # Size of additional entries added to Deny list
-print(f"Size of additional items added to deny list: {len(concat_deny_list_df.axes[0]) - len(deny_list_df.axes[0])}")
+print(f"Size of additional items added to deny list: {len(result_df.axes[0]) - len(deny_list_df.axes[0])}")
 
 # print time taken for the process.
 print(f"Total processing time (seconds): {time.time() - start_time}")
 
-
+# TODO: exclude IP address from the bing spam list for comparision.
+# TODO : Drop any rows that are empty
 
 
   
