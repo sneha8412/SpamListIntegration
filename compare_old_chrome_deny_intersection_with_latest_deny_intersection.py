@@ -37,7 +37,7 @@ def PrintDataframe(df):
 # Find intersection of old and new chrome data.
 def intersect_old_and_new_data(old_df, new_df):
     merged_df = pd.merge(new_df, old_df, how='inner', on=['NormalizedDomain'])
-    merged_df.drop_duplicates() # removes dupes
+    merged_df.drop_duplicates(inplace=True) # removes dupes
     print(f"merged Notification Domains Size: {len(merged_df.axes[0])}")
     
     # del merged_df["origin"]

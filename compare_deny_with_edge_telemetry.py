@@ -32,7 +32,7 @@ def PrintDataframe(df):
 # Find intersection of deny with the Edge permissions telemtry data 
 def edge_deny_intersection(edge_df, deny_df):
     merged_df = pd.merge(deny_df, edge_df, how='inner', on=['NormalizedDomain'])
-    merged_df.drop_duplicates() # removes dupes
+    merged_df.drop_duplicates(inplace=True) # removes dupes
     print(f"intersection of Edge and deny list Domains Size: {len(merged_df.axes[0])}")
     merged_df.to_csv("Edge_deny_intersect_only_domains.csv", index=False, columns =['NormalizedDomain', 'Origin'])
     return merged_df

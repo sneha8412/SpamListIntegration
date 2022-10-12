@@ -38,7 +38,7 @@ def PrintDataframe(df):
 # Find intersection of chrome with the edge telemtry data.
 def merge_edge_and_chrome_intersection(edge_df, chrome_df):
     merged_df = pd.merge(chrome_list_df, telemetry_df, how='inner', on=['NormalizedDomain'])
-    merged_df.drop_duplicates() # removes dupes
+    merged_df.drop_duplicates(inplace=True) # removes dupes
     print(f"merged Notification Domains Size: {len(merged_df.axes[0])}")
     
     del merged_df["origin"]
