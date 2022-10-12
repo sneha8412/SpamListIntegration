@@ -1,8 +1,7 @@
 import pandas as pd
 from urllib.parse import urlparse
-# This file aims to find the common domains in the deny list and the edge Telemetry
-# in an attempt to find any domains in the deny list that are redundant or no longer 
-# send any notifications.
+# This file aims to find the top domains from the list of top-1m.csv in the new domains
+# that will be added to the deny list. 
 
 # formats:
 # bing spam list: google.com (does not have www)
@@ -55,7 +54,7 @@ top_1m_with_header_df['NormalizedDomain'] = top_1m_with_header_df['Origin'].map(
 print("Read deny list dataframe")
 deny_list_df = pd.read_csv('bing_spam_domains_from_edge_tobe_added_to_denylist.csv', usecols=['origin'])
 deny_list_df['NormalizedDomain'] = deny_list_df['origin'].map(NormalizeDomain)
-print(f"Size of existing DenyList data frame: {len(deny_list_df.axes[0])}")
+print(f"Size of new domains to be added to the DenyList data frame: {len(deny_list_df.axes[0])}")
 
 edge_deny_intersection(top_1m_with_header_df, deny_list_df)
 
