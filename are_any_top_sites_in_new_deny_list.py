@@ -1,5 +1,6 @@
+
 import pandas as pd
-from urllib.parse import urlparse
+
 # This file aims to find the top domains from the list of top-1m.csv in the new domains
 # that will be added to the deny list. 
 
@@ -28,14 +29,47 @@ def PrintDataframe(df):
     for index, row in df.iterrows():
         print(row)
 
-# Find intersection of new edge list with the top 1 million data 
-def edge_deny_intersection(top_sites_df, deny_df):
-    merged_df = pd.merge(top_sites_df, deny_df, how='inner', on=['NormalizedDomain'])
+# Find intersection of new deny list (created with bing spam filter) with the top 10k data 
+def edge_deny_intersection_10k(top_10k_sites_df, deny_df):
+    merged_df = pd.merge(top_10k_sites_df, deny_df, how='inner', on=['NormalizedDomain'])
     merged_df.drop_duplicates(inplace=True) # removes dupes
-    print(f"intersection of top 1 million and deny list Domains Size: {len(merged_df.axes[0])}")
-    merged_df.reset_index()
+    print(f"intersection of top 10k sites and new deny list Domains Size: {len(merged_df.axes[0])}")
     merged_df.to_csv("top_10ksites_found_in_denylist.csv", index=False, header=True, columns =['rank', 'Origin'])
     return merged_df
+
+# Remove to 100 sites from the new deny list (created with bing spam filter).
+def remove_top_100_sites_from_deny(deny_to_add, top_100_sites):
+    deny_to_add = deny_to_add[['NormalizedDomain', 'origin']]
+    deny_to_add['Origin'] = deny_to_add['origin']
+ 
+    top_100_sites = top_100_sites[['NormalizedDomain', 'Origin']]
+  
+    merged_df = deny_to_add.merge(top_100_sites, how='left', indicator=True)
+    print(f" Size of the new deny list without the top 100 domains: {len(merged_df.axes[0])}")
+
+    deny_with_no_top_sites_df = merged_df[merged_df['_merge'] == 'left_only']
+    deny_with_no_top_sites_df.dropna(inplace=True)
+    print(f"Size of Updated deny list without top 100 domains: {len(deny_with_no_top_sites_df.axes[0])}")
+    deny_with_no_top_sites_df.to_csv("deny_list_after_top100_domains_removed.csv", index=False, columns=['Origin'])
+
+    #print(deny_with_no_top_sites_df)
+    return deny_with_no_top_sites_df
+
+# compare the new deny list (one without the top 100 sites) with the existing deny list
+# to keep only unique domains
+#TODO Fix the format of the concat_deny_list_df csv. 
+def check_for_dupes_in_existing_deny(deny_without_top, existing_deny):
+    print(f"size of the deny list to add: {len(deny_without_top.axes[0])}")
+    del deny_without_top['NormalizedDomain']
+    
+    frames_to_concat = [deny_without_top, existing_deny ] # put the frames to union in a array
+    concat_deny_list_df = pd.concat(frames_to_concat)
+    concat_deny_list_df.drop_duplicates(inplace=True) # remove dupes if any
+    print(f"Final Deny List DataFrame size: {len(concat_deny_list_df.axes[0])}")
+    print(f"Size of additional items added to deny list: {len(concat_deny_list_df.axes[0]) - len(existing_deny.axes[0])}")
+    concat_deny_list_df.to_csv('final_deny_list_without_dupes_and_top_sites.csv', index=False )
+    print(concat_deny_list_df)
+    return concat_deny_list_df
 
 # Main Program 
 
@@ -46,16 +80,37 @@ top_10k = top_df.head(10000) # return the top 10k rows
 top_10k.to_csv("top_10k_sites_with_header.csv", index=False, columns=['rank','Origin'])
 print(f"Size of top 1 mil data frame: {len(top_df.axes[0])}")
 
+top_100_df = top_df.head(100) # gets the top 100 domain
+top_100_df.to_csv("top_100_sites_with_header.csv", index=False, columns=['rank','Origin'])
+top_100_with_header_df =  pd.read_csv('top_100_sites_with_header.csv', usecols=['rank','Origin'])
+top_100_with_header_df['NormalizedDomain'] = top_100_df['Origin'].map(NormalizeDomain)
+
 # Read the new top-1m_sites_with_header.csv
-top_1m_with_header_df =  pd.read_csv('top_10k_sites_with_header.csv', usecols=['rank','Origin'])
-top_1m_with_header_df['NormalizedDomain'] = top_1m_with_header_df['Origin'].map(NormalizeDomain)
+top_10k_with_header_df =  pd.read_csv('top_10k_sites_with_header.csv', usecols=['rank','Origin'])
+top_10k_with_header_df['NormalizedDomain'] = top_10k_with_header_df['Origin'].map(NormalizeDomain)
 
 # Read the deny list.
 print("Read deny list dataframe")
-deny_list_df = pd.read_csv('bing_spam_domains_from_edge_tobe_added_to_denylist.csv', usecols=['origin'])
+deny_list_df = pd.read_csv('bing_spam_original_domains_from_edge_tobe_added_to_denylist.csv', usecols=['origin'])
 deny_list_df['NormalizedDomain'] = deny_list_df['origin'].map(NormalizeDomain)
-print(f"Size of new domains to be added to the DenyList data frame: {len(deny_list_df.axes[0])}")
+print(f"Size of DenyList after bing spam match: {len(deny_list_df.axes[0])}")
 
-edge_deny_intersection(top_1m_with_header_df, deny_list_df)
+#Read the top sites that matched in deny list
+matched_domains_df = pd.read_csv('top_100_sites_found_in_denylist.csv', usecols=['Origin'] )
+matched_domains_df['NormalizedDomain'] = matched_domains_df['Origin'].map(NormalizeDomain)
+
+# Read the updated deny_list with top sites removed. 
+deny_without_top_df = pd.read_csv('deny_list_after_top100_domains_removed.csv', usecols=['Origin'])
+deny_without_top_df['NormalizedDomain'] = deny_without_top_df['Origin'].map(NormalizeDomain)
+
+# Read Existing deny_list.
+existing_deny_df = pd.read_csv('production_domains.txt',  names=["SpamDomain"])
+#existing_deny_df['NormalizedDomain'] = existing_deny_df['SpamDomain'].map(NormalizeDomain)
+#print(existing_deny_df)
+print(f"Size of existing DenyList data frame: {len(existing_deny_df.axes[0])}")
+
+#edge_deny_intersection_10k(top_10k_with_header_df, deny_list_df)
+remove_top_100_sites_from_deny(deny_list_df, top_100_with_header_df)
+check_for_dupes_in_existing_deny(deny_without_top_df, existing_deny_df)
 
 
