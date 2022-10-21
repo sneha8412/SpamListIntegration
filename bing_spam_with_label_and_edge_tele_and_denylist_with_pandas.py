@@ -46,12 +46,12 @@ spam_list_df['NormalizedDomain'] = spam_list_df['SpamDomain'].map(NormalizeDomai
 
 # Get the domains from the bing spam that have Spam and Crush Label only. 
 result_spam_df = spam_list_df.query("SpamLabel == 'Spam'")
-print(f"size of domains with spam label in Bing Spam List {len(result_spam_df.axes[0])}")
+#print(f"size of domains with spam label in Bing Spam List {len(result_spam_df.axes[0])}")
 result_crush_df = spam_list_df.query("SpamLabel == 'Crush'")
-print(f"size of domains with Crush label in bing Spam list {len(result_crush_df.axes[0])}")
+#print(f"size of domains with Crush label in bing Spam list {len(result_crush_df.axes[0])}")
 df_to_concat = [ result_spam_df, result_crush_df[["SpamDomain"]] ]
 result_df = pd.concat(df_to_concat) # gets all rows with "Spam" label
-print(f"size of the result of domains with spam and crush combined labels in bing Spam list {len(result_df.axes[0])} ")
+#print(f"size of the result of domains with spam and crush combined labels in bing Spam list {len(result_df.axes[0])} ")
 
 # Merge the normalized Bing Spam List with Edge telemetry using inner join.
 merged_df =  pd.merge(result_df, telemetry_df, how='inner', on=['NormalizedDomain'])
